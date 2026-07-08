@@ -95,10 +95,17 @@ app.get('/callback', async (req, res) => {
       '#1db954',
     ));
   } catch (err) {
+    const spotifyError = err.response?.data;
     console.error('OAuth callback error:', err.message);
+    console.error('Spotify response:', JSON.stringify(spotifyError));
+    console.error('Redirect URI used:', REDIRECT_URI);
+    console.error('Client ID set:', !!CLIENT_ID);
+    console.error('Client Secret set:', !!CLIENT_SECRET);
+
+    const detail = spotifyError?.error_description || spotifyError?.error || err.message;
     return res.send(htmlPage(
       '❌ Something went wrong',
-      'Failed to link your Spotify account. Please try again with /connect in Discord.',
+      `Failed to link your Spotify account: <code>${detail}</code><br><br>Please try again with /connect in Discord.`,
       '#e74c3c',
     ));
   }
